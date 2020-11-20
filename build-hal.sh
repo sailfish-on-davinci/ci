@@ -7,4 +7,5 @@ breakfast $DEVICE
 echo "clean .repo folder"
 rm -rf $ANDROID_ROOT/.repo
 
-make -j$(nproc --all) hybris-hal $(external/droidmedia/detect_build_targets.sh $PORT_ARCH $(gettargetarch))
+make -j$(nproc --all) hybris-hal $(external/droidmedia/detect_build_targets.sh $PORT_ARCH $(gettargetarch)) \
+ $(external/audioflingerglue/detect_build_targets.sh $PORT_ARCH $(gettargetarch))

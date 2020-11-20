@@ -22,7 +22,7 @@ jobs:
       DEVICE: vince
       VENDOR: xiaomi
       ANDROID_ROOT: /home/runner/work/hadk_14.1/
-      SAILFISH_SKD_VERSION: 3.3.0.14
+      SAILFISH_SKD_VERSION: 3.4.0.24
 
     steps:
     - name: Checkout
@@ -70,6 +70,8 @@ jobs:
         git clone --recurse-submodules https://github.com/Sailfish-On-Vince/droid-hal-version-vince.git $ANDROID_ROOT/hybris/droid-hal-version-vince
         rm -rf $ANDROID_ROOT/external/droidmedia
         git clone https://github.com/sailfishos/droidmedia.git $ANDROID_ROOT/external/droidmedia
+        rm -rf $ANDROID_ROOT/external/audioflingerglue
+        git clone https://github.com/mer-hybris/audioflingerglue.git $ANDROID_ROOT/external/audioflingerglue
 
     - name: Build HAL
       run: |
