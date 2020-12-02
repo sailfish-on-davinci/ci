@@ -3,7 +3,6 @@
 set -x
 
 source /home/nemo/work/ci/ci/hadk.env
-export ANDROID_ROOT=/home/nemo/work/hadk_14.1
 
 sudo chown -R nemo:nemo $ANDROID_ROOT
 cd $ANDROID_ROOT
@@ -34,17 +33,4 @@ hybris/mw/droidmedia-localbuild/rpm/droidmedia.spec
 mv hybris/mw/droidmedia-$DROIDMEDIA_VERSION.tgz hybris/mw/droidmedia-localbuild
 rpm/dhd/helpers/build_packages.sh --build=hybris/mw/droidmedia-localbuild
 
-AUDIOFLINGERGLUE_VERSION=$(git --git-dir external/audioflingerglue/.git describe --tags | sed \
--r "s/\-/\+/g")
-rpm/dhd/helpers/pack_source_audioflingerglue-localbuild.sh $AUDIOFLINGERGLUE_VERSION
-mkdir -p hybris/mw/audioflingerglue-localbuild/rpm
-cp rpm/dhd/helpers/audioflingerglue-localbuild.spec \
-hybris/mw/audioflingerglue-localbuild/rpm/audioflingerglue.spec
-sed -ie "s/0.0.0/$AUDIOFLINGERGLUE_VERSION/" \
-hybris/mw/audioflingerglue-localbuild/rpm/audioflingerglue.spec
-mv hybris/mw/audioflingerglue-$AUDIOFLINGERGLUE_VERSION.tgz hybris/mw/audioflingerglue-localbuild
-rpm/dhd/helpers/build_packages.sh --build=hybris/mw/audioflingerglue-localbuild
-
 rpm/dhd/helpers/build_packages.sh --droid-hal
-
-cat /home/nemo/work/hadk_14.1/droid-hal-$DEVICE.log
