@@ -19,9 +19,9 @@ jobs:
     runs-on: ubuntu-16.04
 
     env:
-      DEVICE: vince
+      DEVICE: davinci
       VENDOR: xiaomi
-      ANDROID_ROOT: /home/runner/work/hadk_14.1/
+      ANDROID_ROOT: /home/runner/work/hadk_16.0/
       SAILFISH_SKD_VERSION: 3.4.0.24
 
     steps:
@@ -54,24 +54,21 @@ jobs:
         source hadk.env
         mkdir -p $ANDROID_ROOT
         cd $ANDROID_ROOT
-        repo init -u git://github.com/mer-hybris/android.git -b hybris-14.1 --depth=1
-        repo sync -j8 -c --no-clone-bundle --no-tags
+        repo init -u git://github.com/mer-hybris/android.git -b hybris-16.0 --depth=1
+        repo sync -j$(nproc --all) -c --no-clone-bundle --no-tags --optimized-fetch --prune
     
     - name: Clone device spec source
       run: |
         source hadk.env
-        git clone https://github.com/Sailfish-On-Vince/device_xiaomi_vince.git $ANDROID_ROOT/device/xiaomi/vince --depth=1
-        git clone https://github.com/Sailfish-On-Vince/vendor_xiaomi_vince.git $ANDROID_ROOT/vendor/xiaomi/vince --depth=1
-        git clone https://github.com/Sailfish-On-Vince/Xiaomi_Kernel_OpenSource.git $ANDROID_ROOT/kernel/xiaomi/msm8953 --depth=1
+        git clone https://github.com/sailfish-on-davinci/device_xiaomi_davinci.git $ANDROID_ROOT/device/xiaomi/davinci --depth=1
+        git clone https://github.com/sailfish-on-davinci/android_device_xiaomi_sm6150-common $ANDROID_ROOT/device/xiaomi/sm6150-common --depth=1
+        git clone https://github.com/sailfish-on-davinci/vendor_xiaomi.git $ANDROID_ROOT/vendor/xiaomi/davinci --depth=1
+        git clone https://github.com/sailfish-on-davinci/android_kernel_xiaomi_sm6150_fork.git $ANDROID_ROOT/kernel/xiaomi/davinci --depth=1
         rm -rf $ANDROID_ROOT/hybris/hybris-boot
-        git clone https://github.com/Sailfish-On-Vince/hybris-boot.git $ANDROID_ROOT/hybris/hybris-boot
-        git clone --recurse-submodules https://github.com/Sailfish-On-Vince/droid-hal-vince.git $ANDROID_ROOT/rpm 
-        git clone --recurse-submodules https://github.com/Sailfish-On-Vince/droid-config-vince.git $ANDROID_ROOT/hybris/droid-configs
-        git clone --recurse-submodules https://github.com/Sailfish-On-Vince/droid-hal-version-vince.git $ANDROID_ROOT/hybris/droid-hal-version-vince
-        rm -rf $ANDROID_ROOT/external/droidmedia
-        git clone https://github.com/sailfishos/droidmedia.git $ANDROID_ROOT/external/droidmedia
-        rm -rf $ANDROID_ROOT/external/audioflingerglue
-        git clone https://github.com/mer-hybris/audioflingerglue.git $ANDROID_ROOT/external/audioflingerglue
+        git clone https://github.com/sailfish-on-davinci/hybris-boot.git -b davinci-fixup-mountpoints $ANDROID_ROOT/hybris/hybris-boot
+        git clone --recurse-submodules https://github.com/sailfish-on-davinci/droid-hal-davinci.git $ANDROID_ROOT/rpm 
+        git clone --recurse-submodules https://github.com/sailfish-on-davinci/droid-config-davinci.git $ANDROID_ROOT/hybris/droid-configs
+        git clone --recurse-submodules https://github.com/sailfish-on-davinci/droid-hal-version-davinci.git $ANDROID_ROOT/hybris/droid-hal-version-davinci
 
     - name: Build HAL
       run: |
@@ -83,7 +80,7 @@ jobs:
       run: |
         echo "clean more folders"
         rm -rf $ANDROID_ROOT/prebuilts $ANDROID_ROOT/external/chromium* $ANDROID_ROOT/tools/external/gradle $ANDROID_ROOT/packages
-        rm -rf $ANDROID_ROOT/out/build-lineage_vince.ninja
+        rm -rf $ANDROID_ROOT/out/build-lineage_davinci.ninja
         chmod +x build-rpm.sh
         sudo docker images|grep -v REPOSITORY|awk '{print $3}'|xargs docker rmi
         sudo docker pull coderus/sailfishos-platform-sdk:$SAILFISH_SKD_VERSION
