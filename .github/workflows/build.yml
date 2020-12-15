@@ -54,23 +54,27 @@ jobs:
         cd $ANDROID_ROOT
         repo init -u git://github.com/mer-hybris/android.git -b hybris-16.0 --depth=1
         repo sync -j$(nproc --all) -c --no-clone-bundle --no-tags --optimized-fetch --prune
-    
+
+    - name: Check free disk
+      run: |
+        df -h
+      shell: bash
+
     - name: Clone device spec source
       run: |
         source hadk.env
-        git clone https://github.com/sailfish-on-davinci/android_device_xiaomi_davinci.git $ANDROID_ROOT/device/xiaomi/davinci --depth=1
-        git clone https://github.com/sailfish-on-davinci/android_device_xiaomi_sm6150-common $ANDROID_ROOT/device/xiaomi/sm6150-common --depth=1
-        git clone https://github.com/sailfish-on-davinci/vendor_xiaomi.git $ANDROID_ROOT/vendor/xiaomi/davinci --depth=1
-        git clone https://github.com/sailfish-on-davinci/android_kernel_xiaomi_davinci.git $ANDROID_ROOT/kernel/xiaomi/davinci --depth=1
+        git clone https://github.com/sailfish-on-davinci/android_device_xiaomi_davinci.git $ANDROID_ROOT/device/xiaomi/davinci --depth=1 -b lineage-16.0
+        git clone https://github.com/sailfish-on-davinci/android_device_xiaomi_sm6150-common $ANDROID_ROOT/device/xiaomi/sm6150-common --depth=1 -b lineage-16.0
+        git clone https://github.com/sailfish-on-davinci/vendor_xiaomi.git $ANDROID_ROOT/vendor/xiaomi/davinci --depth=1 -b lineage-16.0
+        git clone https://github.com/sailfish-on-davinci/android_kernel_xiaomi_davinci.git $ANDROID_ROOT/kernel/xiaomi/davinci --depth=1 -b mkp
         rm -rf $ANDROID_ROOT/hybris/hybris-boot
-        git clone https://github.com/sailfish-on-davinci/hybris-boot.git -b davinci-fixup-mountpoints $ANDROID_ROOT/hybris/hybris-boot
-        git clone --recurse-submodules https://github.com/sailfish-on-davinci/droid-hal-davinci.git $ANDROID_ROOT/rpm 
-        git clone --recurse-submodules https://github.com/sailfish-on-davinci/droid-config-davinci.git $ANDROID_ROOT/hybris/droid-configs
-        git clone --recurse-submodules https://github.com/sailfish-on-davinci/droid-hal-version-davinci.git $ANDROID_ROOT/hybris/droid-hal-version-davinci
+        git clone https://github.com/sailfish-on-davinci/hybris-boot.git -b davinci-fixup-mountpoints $ANDROID_ROOT/hybris/hybris-boot --depth=1
+        git clone --recurse-submodules https://github.com/sailfish-on-davinci/droid-hal-davinci.git $ANDROID_ROOT/rpm --depth=1
+        git clone --recurse-submodules https://github.com/sailfish-on-davinci/droid-config-davinci.git $ANDROID_ROOT/hybris/droid-configs --depth=1
+        git clone --recurse-submodules https://github.com/sailfish-on-davinci/droid-hal-version-davinci.git $ANDROID_ROOT/hybris/droid-hal-version-davinci --depth=1
 
     - name: Build HAL
       run: |
-        rm -rf $ANDROID_ROOT/.repo
         chmod +x build-hal.sh
         bash build-hal.sh
       shell: bash
