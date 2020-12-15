@@ -61,7 +61,7 @@ jobs:
         mkdir -p $ANDROID_ROOT
         cd $ANDROID_ROOT
         repo init -u git://github.com/mer-hybris/android.git -b hybris-16.0 --depth=1
-        repo sync -j$(nproc --all) -c --no-clone-bundle --no-tags --optimized-fetch --prune
+        repo sync -j$(nproc --all) -c --no-clone-bundle --no-tags
     
     - name: Clone device spec source
       run: |
