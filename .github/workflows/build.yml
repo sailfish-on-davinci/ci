@@ -39,6 +39,12 @@ jobs:
         libncurses5-dev libsdl1.2-dev libssl-dev libwxgtk3.0-dev \
         libxml2 libxml2-utils lzop pngcrush rsync schedtool \
         squashfs-tools xsltproc yasm zip zlib1g-dev git
+        sudo rm -rf \
+          /usr/share/dotnet \
+          /etc/mysql \
+          /etc/php
+        sudo -E apt-get -y autoremove --purge
+        sudo -E apt-get clean
 
 
     - name: Download repo bin file
@@ -72,6 +78,7 @@ jobs:
 
     - name: Build HAL
       run: |
+        rm -rf $ANDROID_ROOT/.repo
         chmod +x build-hal.sh
         bash build-hal.sh
       shell: bash
