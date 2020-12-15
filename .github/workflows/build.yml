@@ -58,7 +58,7 @@ jobs:
     - name: Clone device spec source
       run: |
         source hadk.env
-        git clone https://github.com/sailfish-on-davinci/device_xiaomi_davinci.git $ANDROID_ROOT/device/xiaomi/davinci --depth=1
+        git clone https://github.com/sailfish-on-davinci/android_device_xiaomi_davinci.git $ANDROID_ROOT/device/xiaomi/davinci --depth=1
         git clone https://github.com/sailfish-on-davinci/android_device_xiaomi_sm6150-common $ANDROID_ROOT/device/xiaomi/sm6150-common --depth=1
         git clone https://github.com/sailfish-on-davinci/vendor_xiaomi.git $ANDROID_ROOT/vendor/xiaomi/davinci --depth=1
         git clone https://github.com/sailfish-on-davinci/android_kernel_xiaomi_davinci.git $ANDROID_ROOT/kernel/xiaomi/davinci --depth=1
