@@ -9,9 +9,9 @@ name: Build SailfishOS dhd
 on: 
   release:
     types: [published]
-  push:
-    branches: 
-      - master
+
+permissions:
+  contents: write
 
 jobs:
 
@@ -21,22 +21,55 @@ jobs:
     env:
       DEVICE: davinci
       VENDOR: xiaomi
-      ANDROID_ROOT: /home/runner/work/hadk_16.0/
-      SAILFISH_SKD_VERSION: 3.4.0.24
+      ANDROID_ROOT: /home/runner/work/ci/ci/hadk_16.0/
+      SAILFISH_SDK_VERSION: 4.5.0.16
 
     steps:
+    - name: Maximize build space
+      uses: easimon/maximize-build-space@master
+      with:
+        root-reserve-mb: 20480
+        swap-size-mb: 1024
+        remove-dotnet: 'true'
+        remove-haskell: 'true'
+        remove-android: 'true'
+        remove-docker-images: 'true'
+
+    - name: Free Disk Space (Ubuntu)
+      uses: jlumbroso/free-disk-space@main
+      with:
+        # this might remove tools that are actually needed,
+        # if set to "true" but frees about 6 GB
+        tool-cache: true
+        
+        # all of these default to true, but feel free to set to
+        # "false" if necessary for your workflow
+        android: true
+        dotnet: true
+        haskell: true
+        large-packages: true
+        swap-storage: true
+
     - name: Checkout
       uses: actions/checkout@master
-    
+
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+      with:
+        platforms: all
+
     - name: Initialization environment
       run: |
         sudo apt-get update
         sudo apt-get install -y \
-        python git openjdk-8-jdk android-tools-adb bc bison \
-        build-essential curl flex g++-multilib gcc-multilib gnupg gperf imagemagick lib32ncurses-dev \
+        openjdk-8-jdk android-tools-adb bc bison \
+        build-essential curl flex g++-multilib gcc-multilib gnupg gperf \
+        imagemagick lib32ncurses-dev qemu-user-static \
         lib32readline-dev lib32z1-dev  liblz4-tool libncurses5-dev libsdl1.2-dev libssl-dev \
         libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc yasm zip zlib1g-dev \
-        libtinfo5 libncurses5
+        qemu-user-static qemu-system-arm e2fsprogs simg2img \
+        libtinfo5 libncurses5 gzip virtualenv git python2
 
 
     - name: Download repo bin file
@@ -47,47 +80,65 @@ jobs:
         git config --global user.name "BirdZhang"
         git config --global user.email "0312birdzhang@gmail.com"
 
+    - name: Cache repo directory
+      uses: actions/cache@v3
+      id: repo-cache
+      with:
+        path: |
+          .repo
+          device
+          vendor
+          kernel/xiaomi/davinci
+        key: repo-hybris-16.0
+        restore-keys: |
+          repo-
+
     - name: Downloading source code
+      if: steps.repo-cache.outputs.cache-hit != 'true'
       run: |
         source hadk.env
         mkdir -p $ANDROID_ROOT
         cd $ANDROID_ROOT
-        repo init -u git://github.com/mer-hybris/android.git -b hybris-16.0 --depth=1
-        repo sync -j$(nproc --all) -c --no-clone-bundle --no-tags --optimized-fetch --prune
-
-    - name: Check free disk
-      run: |
-        df -h
-      shell: bash
-
+        repo init -u https://github.com/mer-hybris/android.git -b hybris-16.0 --depth=1
+        repo sync -j8 -c --no-clone-bundle --no-tags
+        git clone https://github.com/sailfish-on-davinci/android_device_xiaomi_davinci.git $ANDROID_ROOT/device/xiaomi/davinci --depth=1 -b lineage-16.0
+        git clone https://github.com/sailfish-on-davinci/android_device_xiaomi_sm6150-common $ANDROID_ROOT/device/xiaomi/sm6150-common --depth=1 -b lineage-16.0
+        git clone https://github.com/sailfish-on-davinci/vendor_xiaomi.git $ANDROID_ROOT/vendor/xiaomi --depth=1 -b lineage-16.0
+        git clone https://github.com/sailfish-on-davinci/android_kernel_xiaomi_davinci.git $ANDROID_ROOT/kernel/xiaomi/davinci --depth=1 -b mkp
+    
     - name: Clone device spec source
       run: |
         source hadk.env
-        git clone https://github.com/sailfish-on-davinci/android_device_xiaomi_davinci.git $ANDROID_ROOT/device/xiaomi/davinci --depth=1 -b lineage-16.0
-        git clone https://github.com/sailfish-on-davinci/android_device_xiaomi_sm6150-common $ANDROID_ROOT/device/xiaomi/sm6150-common --depth=1 -b lineage-16.0
-        git clone https://github.com/sailfish-on-davinci/vendor_xiaomi.git $ANDROID_ROOT/vendor/xiaomi/davinci --depth=1 -b lineage-16.0
-        git clone https://github.com/sailfish-on-davinci/android_kernel_xiaomi_davinci.git $ANDROID_ROOT/kernel/xiaomi/davinci --depth=1 -b mkp
+        
         rm -rf $ANDROID_ROOT/hybris/hybris-boot
         git clone https://github.com/sailfish-on-davinci/hybris-boot.git -b davinci-fixup-mountpoints $ANDROID_ROOT/hybris/hybris-boot --depth=1
+        git clone https://github.com/sailfish-on-davinci/hybris-installer.git $ANDROID_ROOT/hybris/hybris-installer
         git clone --recurse-submodules https://github.com/sailfish-on-davinci/droid-hal-davinci.git $ANDROID_ROOT/rpm --depth=1
         git clone --recurse-submodules https://github.com/sailfish-on-davinci/droid-config-davinci.git $ANDROID_ROOT/hybris/droid-configs --depth=1
         git clone --recurse-submodules https://github.com/sailfish-on-davinci/droid-hal-version-davinci.git $ANDROID_ROOT/hybris/droid-hal-version-davinci --depth=1
 
+    - name: Cache build output
+      uses: actions/cache@v3
+      id: build-cache
+      with:
+        path: ${{env.ANDROID_ROOT}}/out
+        key: build-hal-${{github.ref}}-${{ hashFiles('kernel/xiaomi/davinci/.git/refs/heads/mkp') }}
+        restore-keys: |
+          build-hal-${{github.ref}}
+
     - name: Build HAL
+      if: steps.build-cache.outputs.cache-hit != 'true'
       run: |
         chmod +x build-hal.sh
+        sudo ln -sf /usr/bin/python2.7 /usr/bin/python
         bash build-hal.sh
       shell: bash
 
     - name: Build dhd in container
       run: |
-        echo "clean more folders"
-        rm -rf $ANDROID_ROOT/prebuilts $ANDROID_ROOT/external/chromium* $ANDROID_ROOT/tools/external/gradle $ANDROID_ROOT/packages
-        rm -rf $ANDROID_ROOT/out/build-lineage_davinci.ninja
         chmod +x build-rpm.sh
-        sudo docker images|grep -v REPOSITORY|awk '{print $3}'|xargs docker rmi
-        sudo docker pull coderus/sailfishos-platform-sdk:$SAILFISH_SKD_VERSION
-        sudo docker run -v /home/runner/work:/home/nemo/work coderus/sailfishos-platform-sdk:$SAILFISH_SKD_VERSION /bin/sh /home/nemo/work/ci/ci/build-rpm.sh
+        sudo docker pull coderus/sailfishos-platform-sdk:$SAILFISH_SDK_VERSION
+        sudo docker run --privileged -v /home/runner/work:/home/mersdk/work coderus/sailfishos-platform-sdk:$SAILFISH_SDK_VERSION  /bin/sh /home/mersdk/work/ci/ci/build-rpm.sh
       shell: bash
 
     - name: Check free disk
@@ -99,11 +150,17 @@ jobs:
     - name : Upload boot image
       uses: actions/upload-artifact@master
       with:
-        name: hybris-boot.img
+        name: hybris-boot.img.zip
         path: ${{env.ANDROID_ROOT}}/out/target/product/${{env.DEVICE}}/hybris-boot.img
 
     - name : Upload droid-local-repo
       uses: actions/upload-artifact@master
       with:
-        name: droid-local-repo
+        name: droid-local-repo.zip
         path: ${{env.ANDROID_ROOT}}/droid-local-repo
+
+    - name: Release
+      uses: softprops/action-gh-release@v2
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: ${{env.ANDROID_ROOT}}/SailfishOScommunity-release-*/sailfishos-*-${{env.DEVICE}}*.zip
