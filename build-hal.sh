@@ -1,4 +1,6 @@
 #!/bin/bash
+set -x
+
 source hadk.env
 cd $ANDROID_ROOT
 source build/envsetup.sh 2>&1
@@ -11,8 +13,7 @@ export PATH=$JAVA_HOME/bin:$PATH
 export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
 
 
-echo "clean .repo folder"
-rm -rf $ANDROID_ROOT/.repo
+
 
 # hack for droidmedia
 cd external/droidmedia
@@ -23,7 +24,10 @@ cd $ANDROID_ROOT
 echo 'MINIMEDIA_AUDIOPOLICYSERVICE_ENABLE := 1' >> external/droidmedia/env.mk
 echo 'AUDIOPOLICYSERVICE_ENABLE := 1' >> external/droidmedia/env.mk
 
+cd $ANDROID_ROOT/external
+git clone --recurse-submodules https://github.com/mer-hybris/libhybris.git
 # hybris-patches
-./hybris-patches/apply-patches.sh --mb
+cd $ANDROID_ROOT
+hybris-patches/apply-patches.sh --mb
 
 make -j$(nproc --all) hybris-hal droidmedia
