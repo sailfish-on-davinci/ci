@@ -136,6 +136,12 @@ jobs:
 
     - name: Build dhd in container
       run: |
+        sudo mkdir -p /home/runner/work/ci/ci/docker
+        # make more diskspace for docker
+        sudo cat /etc/docker/daemon.json
+        sudo systemctl stop docker
+        sudo cp docker/daemon.json /etc/docker/daemon.json
+        sudo systemctl start docker
         chmod +x build-rpm.sh
         sudo docker pull coderus/sailfishos-platform-sdk:$SAILFISH_SDK_VERSION
         sudo docker run --privileged -v /home/runner/work:/home/mersdk/work coderus/sailfishos-platform-sdk:$SAILFISH_SDK_VERSION  /bin/sh /home/mersdk/work/ci/ci/build-rpm.sh
