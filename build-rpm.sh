@@ -26,8 +26,8 @@ sed -i '/CONFIG_NETFILTER_XT_MATCH_QTAGUID/d' hybris/mer-kernel-check/mer_verify
 sb2 -t $VENDOR-$DEVICE-$PORT_ARCH -m sdk-install -R zypper in -y ccache
 
 cd $ANDROID_ROOT
-# cp /home/mersdk/work/ci/ci/helpers/*.sh rpm/dhd/helpers/
-# chmod +x rpm/dhd/helpers/*.sh 
+cp /home/mersdk/work/ci/ci/helpers/*.sh rpm/dhd/helpers/
+chmod +x rpm/dhd/helpers/*.sh 
 
 cd $ANDROID_ROOT
 sudo mkdir -p /proc/sys/fs/binfmt_misc/
