@@ -30,4 +30,7 @@ git clone --recurse-submodules https://github.com/mer-hybris/libhybris.git
 cd $ANDROID_ROOT
 hybris-patches/apply-patches.sh --mb
 
+# get more space
+rm -rf .repo
+
 make -j$(nproc --all) hybris-hal droidmedia
