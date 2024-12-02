@@ -122,9 +122,9 @@ jobs:
       id: build-cache
       with:
         path: ${{env.ANDROID_ROOT}}/out
-        key: build-hal-${{github.ref}}-${{ hashFiles('kernel/xiaomi/davinci/.git/refs/heads/mkp') }}
+        key: build-hal-${{ hashFiles('kernel/xiaomi/davinci/.git/refs/heads/mkp') }}
         restore-keys: |
-          build-hal-${{github.ref}}
+          build-hal-
 
     - name: Build HAL
       if: steps.build-cache.outputs.cache-hit != 'true'

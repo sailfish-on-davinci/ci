@@ -23,7 +23,8 @@ sdk-assistant list
 cd $ANDROID_ROOT
 sed -i '/CONFIG_NETFILTER_XT_MATCH_QTAGUID/d' hybris/mer-kernel-check/mer_verify_kernel_config
 
-sb2 -t $VENDOR-$DEVICE-$PORT_ARCH -m sdk-install -R zypper in -y ccache
+sb2 -t $VENDOR-$DEVICE-$PORT_ARCH -m sdk-install -R zypper in -y ccache python
+sudo zypper in -y python
 
 cd $ANDROID_ROOT
 cp /home/mersdk/work/ci/ci/helpers/*.sh rpm/dhd/helpers/
