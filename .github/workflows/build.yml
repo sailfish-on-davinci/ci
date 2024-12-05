@@ -9,6 +9,9 @@ name: Build SailfishOS dhd
 on: 
   release:
     types: [published]
+  push:
+    branches: 
+      - master
 
 permissions:
   contents: write
@@ -23,6 +26,7 @@ jobs:
       VENDOR: xiaomi
       ANDROID_ROOT: /home/runner/work/ci/ci/hadk_16.0/
       SAILFISH_SDK_VERSION: 4.5.0.16
+      SAILFISH_OS_VERSION: 5.0.0.29
 
     steps:
     - name: Maximize build space
@@ -153,12 +157,6 @@ jobs:
         df -h
       shell: bash
 
-    - name : Upload boot image
-      uses: actions/upload-artifact@master
-      with:
-        name: hybris-boot.img.zip
-        path: ${{env.ANDROID_ROOT}}/out/target/product/${{env.DEVICE}}/hybris-boot.img
-
     - name : Upload droid-local-repo
       uses: actions/upload-artifact@master
       with:
@@ -170,3 +168,10 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/')
       with:
         files: ${{env.ANDROID_ROOT}}/SailfishOScommunity-release-*/sailfishos-*-${{env.DEVICE}}*.zip
+
+    - name: Upload flashable zip
+      uses: actions/upload-artifact@master
+      if: ${{ ! startsWith(github.ref, 'refs/tags/') }}
+      with:
+        name: sailfishos-${{ env.SAILFISH_OS_VERSION}}-${{env.DEVICE}}.zip
+        path: ${{env.ANDROID_ROOT}}/SailfishOScommunity-release-*/sailfishos-*-${{env.DEVICE}}*.zip

@@ -16,11 +16,11 @@ export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
 
 
 # hack for droidmedia
+cd $ANDROID_ROOT
+rm -rf external/droidmedia
+git clone --recurse-submodules https://github.com/sailfishos/droidmedia.git external/droidmedia
 cd external/droidmedia
 git checkout 0.20230605.1
-cd $ANDROID_ROOT
-# echo 'DROIDMEDIA_32 := true' >> external/droidmedia/env.mk
-# echo 'FORCE_HAL:=1' >> external/droidmedia/env.mk
 echo 'MINIMEDIA_AUDIOPOLICYSERVICE_ENABLE := 1' >> external/droidmedia/env.mk
 echo 'AUDIOPOLICYSERVICE_ENABLE := 1' >> external/droidmedia/env.mk
 
