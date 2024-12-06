@@ -84,21 +84,21 @@ jobs:
         git config --global user.name "BirdZhang"
         git config --global user.email "0312birdzhang@gmail.com"
 
-    - name: Cache repo directory
-      uses: actions/cache@v3
-      id: repo-cache
-      with:
-        path: |
-          .repo
-          device
-          vendor
-          kernel/xiaomi/davinci
-        key: repo-hybris-16.0
-        restore-keys: |
-          repo-
+    # - name: Cache repo directory
+    #   uses: actions/cache@v3
+    #   id: repo-cache
+    #   with:
+    #     path: |
+    #       .repo
+    #       device
+    #       vendor
+    #       kernel/xiaomi/davinci
+    #     key: repo-hybris-16.0
+    #     restore-keys: |
+    #       repo-
 
     - name: Downloading source code
-      if: steps.repo-cache.outputs.cache-hit != 'true'
+      # if: steps.repo-cache.outputs.cache-hit != 'true'
       run: |
         source hadk.env
         mkdir -p $ANDROID_ROOT
