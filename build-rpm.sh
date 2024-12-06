@@ -24,11 +24,15 @@ cd $ANDROID_ROOT
 sed -i '/CONFIG_NETFILTER_XT_MATCH_QTAGUID/d' hybris/mer-kernel-check/mer_verify_kernel_config
 
 sb2 -t $VENDOR-$DEVICE-$PORT_ARCH -m sdk-install -R zypper in -y ccache python
-sudo zypper in -y python
+sudo zypper in -y python #dhd a374978b04ac60f1c3088715ec42e4fd02de224a removed python
 
+# dhd hack
 cd $ANDROID_ROOT
 cp /home/mersdk/work/ci/ci/helpers/*.sh rpm/dhd/helpers/
-chmod +x rpm/dhd/helpers/*.sh 
+chmod +x rpm/dhd/helpers/*.sh
+git config --global user.email "ci@github.com"
+git config --global user.name "Github Actions"
+git am --signoff < /home/mersdk/work/ci/ci/0001-Install-files-from-vendor.patch
 
 cd $ANDROID_ROOT
 sudo mkdir -p /proc/sys/fs/binfmt_misc/
