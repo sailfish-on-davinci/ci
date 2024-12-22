@@ -1,17 +1,17 @@
-From ede68b56509109b1f391214a15b9ed73791e7d3c Mon Sep 17 00:00:00 2001
+From da6a9b6af3e8b266f2e84b0cdbd9b8127acc5d0d Mon Sep 17 00:00:00 2001
 From: BirdZhang <0312birdzhang@gmail.com>
-Date: Fri, 6 Dec 2024 21:51:21 +0800
-Subject: [PATCH] Install files from /vendor
+Date: Sun, 22 Dec 2024 20:08:51 +0800
+Subject: [PATCH] Install-files-from-vendor
 
 ---
- droid-hal-device.inc | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ droid-hal-device.inc | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
 diff --git a/droid-hal-device.inc b/droid-hal-device.inc
-index 68228cd..3ef0d31 100644
+index 625378e..5e5a9f4 100644
 --- a/droid-hal-device.inc
 +++ b/droid-hal-device.inc
-@@ -661,6 +661,7 @@ sed -i -e '/^[[:space:]]*mkdir[[:space:]]\/tmp[[:space:]]*/s/^/# Removed during
+@@ -605,6 +605,7 @@ sed -i -e '/^[[:space:]]*mkdir[[:space:]]\/tmp[[:space:]]*/s/^/# Removed during
  
  if [ $android_version_major -ge "7" ]; then
  mkdir -p $RPM_BUILD_ROOT%{_libexecdir}/droid-hybris/system/etc/init
@@ -19,19 +19,19 @@ index 68228cd..3ef0d31 100644
  cp -a %{android_root}/out/target/product/%{device}/system/etc/init/servicemanager.rc $RPM_BUILD_ROOT%{_libexecdir}/droid-hybris/system/etc/init/
  echo "%{_libexecdir}/droid-hybris/system/etc/init/*.rc" > tmp/droid-hal.files
  
-@@ -693,8 +694,10 @@ echo "/default.prop" >> tmp/droid-hal.files
+@@ -632,8 +633,11 @@ echo "/default.prop" >> tmp/droid-hal.files
  fi
  
  cp -a %{android_root}/out/target/product/%{device}/system/{bin,lib} $RPM_BUILD_ROOT%{_libexecdir}/droid-hybris/system/.
 +cp -a %{android_root}/out/target/product/%{device}/vendor/lib $RPM_BUILD_ROOT%{_libexecdir}/droid-hybris/vendor/.
  %if 0%{?droid_target_aarch64:1}
--cp -a %{android_root}/out/target/product/%{device}/system/lib64 $RPM_BUILD_ROOT%{_libexecdir}/droid-hybris/system/.
+ cp -a %{android_root}/out/target/product/%{device}/system/lib64 $RPM_BUILD_ROOT%{_libexecdir}/droid-hybris/system/.
 +cp -ar %{android_root}/out/target/product/%{device}/system/lib64 $RPM_BUILD_ROOT%{_libexecdir}/droid-hybris/system/.
 +cp -ar %{android_root}/out/target/product/%{device}/vendor/lib64 $RPM_BUILD_ROOT%{_libexecdir}/droid-hybris/vendor/.
  %endif
  if [ $android_version_major -ge "10" ]; then
      # Create empty /apex, /system/bin/apexd will then mount namespaces therein
-@@ -1144,11 +1147,13 @@ done
+@@ -1048,11 +1052,13 @@ done
  %{_unitdir}
  # hybris and /dev/alog/ libraries
  %{_libexecdir}/droid-hybris/system/lib/
