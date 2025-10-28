@@ -70,14 +70,18 @@ jobs:
     - name: Initialization environment
       run: |
         sudo apt-get update
-        sudo apt-get install -y \
-        openjdk-8-jdk android-tools-adb bc bison \
-        build-essential curl flex g++-multilib gcc-multilib gnupg gperf \
-        imagemagick lib32ncurses-dev qemu-user-static \
-        lib32readline-dev lib32z1-dev  liblz4-tool libncurses5-dev libsdl1.2-dev libssl-dev \
-        libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc yasm zip zlib1g-dev \
-        qemu-user-static qemu-system-arm e2fsprogs simg2img \
-        libtinfo5 libncurses5 gzip virtualenv git python2
+        sudo apt install -y \
+          openjdk-8-jdk-headless \
+          android-tools-adb \
+          bc bison build-essential curl flex \
+          g++-multilib gcc-multilib gnupg gperf imagemagick \
+          lib32ncurses-dev lib32readline-dev lib32z1-dev \
+          liblz4-tool libncurses-dev libsdl2-dev libssl-dev \
+          libxml2 libxml2-utils lzop pngcrush rsync schedtool \
+          squashfs-tools xsltproc yasm zip zlib1g-dev \
+          qemu-user-static qemu-system-arm e2fsprogs simg2img \
+          libtinfo6 gzip python3-venv git python3 python-is-python3 \
+          ccache unzip wget
 
 
     - name: Download repo bin file
