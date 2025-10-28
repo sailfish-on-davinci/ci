@@ -79,7 +79,7 @@ jobs:
           liblz4-tool libncurses-dev libsdl2-dev libssl-dev \
           libxml2 libxml2-utils lzop pngcrush rsync schedtool \
           squashfs-tools xsltproc yasm zip zlib1g-dev \
-          qemu-user-static qemu-system-arm e2fsprogs simg2img \
+          qemu-user-static qemu-system-arm e2fsprogs android-sdk-libsparse-utils \
           libtinfo6 gzip python3-venv git python3 python-is-python3 \
           ccache unzip wget
 
