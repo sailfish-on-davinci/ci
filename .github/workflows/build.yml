@@ -7,11 +7,15 @@
 name: Build SailfishOS dhd
 
 on: 
-  release:
-    types: [published]
   push:
-    branches: 
+    branches:
       - master
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'trigger to build'
+        required: true
+        default: 'run'
 
 permissions:
   contents: write
@@ -26,7 +30,7 @@ jobs:
       VENDOR: xiaomi
       ANDROID_ROOT: /home/runner/work/ci/ci/hadk_16.0/
       SAILFISH_SDK_VERSION: 4.5.0.16
-      SAILFISH_OS_VERSION: 5.0.0.29
+      SAILFISH_OS_VERSION: 5.0.0.58
 
     steps:
     - name: Maximize build space
