@@ -1,6 +1,6 @@
 #!/bin/bash
-sudo apt-get update
-sudo apt-get install -y \
+apt-get update
+apt-get install -y \
     openjdk-8-jdk android-tools-adb bc bison \
     build-essential curl flex g++-multilib gcc-multilib gnupg gperf \
     imagemagick lib32ncurses-dev qemu-user-static \
@@ -32,5 +32,5 @@ git clone --recurse-submodules https://github.com/sailfish-on-davinci/droid-conf
 git clone --recurse-submodules https://github.com/sailfish-on-davinci/droid-hal-version-davinci.git $ANDROID_ROOT/hybris/droid-hal-version-davinci --depth=1
 
 chmod +x build-hal.sh
-sudo ln -sf /usr/bin/python2.7 /usr/bin/python
+ln -sf /usr/bin/python2.7 /usr/bin/python
 bash build-hal.sh
