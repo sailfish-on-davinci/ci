@@ -80,9 +80,9 @@ jobs:
           libxml2 libxml2-utils lzop pngcrush rsync schedtool \
           squashfs-tools xsltproc yasm zip zlib1g-dev \
           qemu-user-static qemu-system-arm e2fsprogs android-sdk-libsparse-utils \
-          libtinfo6 gzip python3-venv git python3 python-is-python3 \
+          libtinfo6 gzip python3-venv git python3 \
           ccache unzip wget
-        sudo ln -s /usr/bin/python3 /usr/bin/python
+        sudo ln -s /usr/bin/python3 /usr/bin/python2
 
 
     - name: Download repo bin file
