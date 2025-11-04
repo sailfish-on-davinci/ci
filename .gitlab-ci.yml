@@ -1,0 +1,16 @@
+image: ubuntu:20.04
+
+before_script:
+ - source hadk.env
+
+build:
+  stage: build
+  script:
+    - sh ./all-in-on.sh
+  only:
+   - web
+   - tags
+
+  artifacts:
+    paths:
+    - out/target/product/davinci/hybris-boot.img
