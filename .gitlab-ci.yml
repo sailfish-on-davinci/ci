@@ -6,7 +6,7 @@ before_script:
 build:
   stage: build
   script:
-    - sh ./all-in-on.sh
+    - bash ./all-in-on.sh
   only:
    - web
    - tags
