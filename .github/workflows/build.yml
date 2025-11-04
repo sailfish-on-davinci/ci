@@ -82,6 +82,7 @@ jobs:
           qemu-user-static qemu-system-arm e2fsprogs android-sdk-libsparse-utils \
           libtinfo6 gzip python3-venv git python3 python-is-python3 \
           ccache unzip wget
+        sudo ln -s /usr/bin/python3 /usr/bin/python
 
 
     - name: Download repo bin file
