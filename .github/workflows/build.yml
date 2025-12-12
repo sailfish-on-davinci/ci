@@ -115,10 +115,10 @@ jobs:
       shell: bash
 
     - name : Upload boot image
-        uses: actions/upload-artifact@master
-        with:
-          name: hybris-boot
-          path: ${{env.ANDROID_ROOT}}/out/target/product/${{env.DEVICE}}/hybris-boot.img
+      uses: actions/upload-artifact@master
+      with:
+        name: hybris-boot
+        path: ${{env.ANDROID_ROOT}}/out/target/product/${{env.DEVICE}}/hybris-boot.img
       
     
     - name: Clone device spec source
