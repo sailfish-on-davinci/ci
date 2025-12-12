@@ -34,6 +34,7 @@ chmod +x rpm/dhd/helpers/*.sh
 git config --global user.email "ci@github.com"
 git config --global user.name "Github Actions"
 git config --global --add safe.directory /home/mersdk/work/ci/ci
+cd $ANDROID_ROOT/rpm/dhd
 git am --signoff < /home/mersdk/work/ci/ci/0001-Install-files-from-vendor.patch
 
 cd $ANDROID_ROOT
@@ -44,6 +45,5 @@ rpm/dhd/helpers/build_packages.sh
 
 if [ "$?" -ne 0 ];then
   # if failed, retry once
-  rpm/dhd/helpers/build_packages.sh
-  # cat $ANDROID_ROOT/droid-hal-$DEVICE.log
+  cat $ANDROID_ROOT/droid-hal-$DEVICE.log|grep ERROR
 fi

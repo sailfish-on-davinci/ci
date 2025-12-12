@@ -125,7 +125,7 @@ jobs:
         source hadk.env
         mkdir -p $ANDROID_ROOT
         cd $ANDROID_ROOT
-        rm -rf .repo prebuilts hardware kernel
+        rm -rf .repo
         git clone https://github.com/sailfish-on-davinci/hybris-installer.git $ANDROID_ROOT/hybris/hybris-installer
         git clone --recurse-submodules https://github.com/sailfish-on-davinci/droid-hal-davinci.git $ANDROID_ROOT/rpm --depth=1
         git clone --recurse-submodules https://github.com/sailfish-on-davinci/droid-config-davinci.git $ANDROID_ROOT/hybris/droid-configs --depth=1
