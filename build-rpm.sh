@@ -43,5 +43,5 @@ rpm/dhd/helpers/build_packages.sh
 if [ "$?" -ne 0 ];then
   # if failed, retry once
   rpm/dhd/helpers/build_packages.sh
-  cat $ANDROID_ROOT/droid-hal-$DEVICE.log
+  # cat $ANDROID_ROOT/droid-hal-$DEVICE.log
 fi

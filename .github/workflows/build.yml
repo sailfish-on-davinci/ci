@@ -22,14 +22,14 @@ permissions:
 
 jobs:
 
-  build:
+  kernel-build:
     runs-on: ubuntu-22.04
 
     env:
       DEVICE: davinci
       VENDOR: xiaomi
       ANDROID_ROOT: /home/runner/work/ci/ci/hadk_16.0/
-      SAILFISH_SDK_VERSION: 4.5.0.16
+      SAILFISH_SDK_VERSION: 5.0.0.43
       SAILFISH_OS_VERSION: 5.0.0.71
 
     steps:
@@ -101,10 +101,7 @@ jobs:
         
         rm -rf $ANDROID_ROOT/hybris/hybris-boot
         git clone https://github.com/sailfish-on-davinci/hybris-boot.git -b davinci-fixup-mountpoints $ANDROID_ROOT/hybris/hybris-boot --depth=1
-        git clone https://github.com/sailfish-on-davinci/hybris-installer.git $ANDROID_ROOT/hybris/hybris-installer
         git clone --recurse-submodules https://github.com/sailfish-on-davinci/droid-hal-davinci.git $ANDROID_ROOT/rpm --depth=1
-        #git clone --recurse-submodules https://github.com/sailfish-on-davinci/droid-config-davinci.git $ANDROID_ROOT/hybris/droid-configs --depth=1
-        #git clone --recurse-submodules https://github.com/sailfish-on-davinci/droid-hal-version-davinci.git $ANDROID_ROOT/hybris/droid-hal-version-davinci --depth=1
         git clone --recurse-submodules  https://github.com/mer-hybris/libhybris.git $ANDROID_ROOT/external/libhybris
         cd $ANDROID_ROOT && hybris-patches/apply-patches.sh --mb
 
@@ -114,42 +111,56 @@ jobs:
         chmod +x build-hal.sh
         sudo ln -sf /usr/bin/python2.7 /usr/bin/python
         bash build-hal.sh
+        df -h
       shell: bash
 
-    # - name: Build dhd in container
-    #   run: |
-    #     sudo mkdir -p /home/runner/work/ci/ci/docker
-    #     # make more diskspace for docker
-    #     sudo cat /etc/docker/daemon.json
-    #     sudo systemctl stop docker
-    #     sudo cp docker/daemon.json /etc/docker/daemon.json
-    #     sudo systemctl start docker
-    #     chmod +x build-rpm.sh
-    #     sudo docker pull coderus/sailfishos-platform-sdk:$SAILFISH_SDK_VERSION
-    #     sudo docker run --privileged -v /home/runner/work:/home/mersdk/work coderus/sailfishos-platform-sdk:$SAILFISH_SDK_VERSION  /bin/sh /home/mersdk/work/ci/ci/build-rpm.sh
-    #   shell: bash
-
     - name : Upload boot image
-      uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@master
+        with:
+          name: hybris-boot
+          path: ${{env.ANDROID_ROOT}}/out/target/product/${{env.DEVICE}}/hybris-boot.img
+      
+    
+    - name: Clone device spec source
+      run: |
+        source hadk.env
+        mkdir -p $ANDROID_ROOT
+        cd $ANDROID_ROOT
+        rm -rf .repo prebuilts hardware kernel
+        git clone https://github.com/sailfish-on-davinci/hybris-installer.git $ANDROID_ROOT/hybris/hybris-installer
+        git clone --recurse-submodules https://github.com/sailfish-on-davinci/droid-hal-davinci.git $ANDROID_ROOT/rpm --depth=1
+        git clone --recurse-submodules https://github.com/sailfish-on-davinci/droid-config-davinci.git $ANDROID_ROOT/hybris/droid-configs --depth=1
+        git clone --recurse-submodules https://github.com/sailfish-on-davinci/droid-hal-version-davinci.git $ANDROID_ROOT/hybris/droid-hal-version-davinci --depth=1
+
+    - name: Build dhd in container
+      run: |
+        sudo mkdir -p /home/runner/work/ci/ci/docker
+        # make more diskspace for docker
+        # sudo cat /etc/docker/daemon.json
+        # sudo systemctl stop docker
+        # sudo cp docker/daemon.json /etc/docker/daemon.json
+        # sudo systemctl start docker
+        chmod +x build-rpm.sh
+        sudo docker pull coderus/sailfishos-platform-sdk:$SAILFISH_SDK_VERSION
+        sudo docker run --privileged -v /home/runner/work:/home/mersdk/work coderus/sailfishos-platform-sdk:$SAILFISH_SDK_VERSION  /bin/sh /home/mersdk/work/ci/ci/build-rpm.sh
+      shell: bash
+
+      
+    - name : Upload droid-local-repo
+        uses: actions/upload-artifact@master
+        with:
+          name: droid-local-repo
+          path: ${{env.ANDROID_ROOT}}/droid-local-repo
+
+    - name: Release
+      uses: softprops/action-gh-release@v2
+      if: startsWith(github.ref, 'refs/tags/')
       with:
-        name: hybris-boot.img.zip
-        path: ${{env.ANDROID_ROOT}}/out/target/product/${{env.DEVICE}}/hybris-boot.img
+        files: ${{env.ANDROID_ROOT}}/SailfishOScommunity-release-*/sailfishos-*-${{env.DEVICE}}*.zip
 
-    # - name : Upload droid-local-repo
-    #   uses: actions/upload-artifact@master
-    #   with:
-    #     name: droid-local-repo.zip
-    #     path: ${{env.ANDROID_ROOT}}/droid-local-repo
-
-    # - name: Release
-    #   uses: softprops/action-gh-release@v2
-    #   if: startsWith(github.ref, 'refs/tags/')
-    #   with:
-    #     files: ${{env.ANDROID_ROOT}}/SailfishOScommunity-release-*/sailfishos-*-${{env.DEVICE}}*.zip
-
-    # - name: Upload flashable zip
-    #   uses: actions/upload-artifact@master
-    #   if: ${{ ! startsWith(github.ref, 'refs/tags/') }}
-    #   with:
-    #     name: sailfishos-${{ env.SAILFISH_OS_VERSION}}-${{env.DEVICE}}.zip
-    #     path: ${{env.ANDROID_ROOT}}/SailfishOScommunity-release-*/sailfishos-*-${{env.DEVICE}}*.zip
+    - name: Upload flashable zip
+      uses: actions/upload-artifact@master
+      if: ${{ ! startsWith(github.ref, 'refs/tags/') }}
+      with:
+        name: sailfishos-${{ env.SAILFISH_OS_VERSION}}-${{env.DEVICE}}.zip
+        path: ${{env.ANDROID_ROOT}}/SailfishOScommunity-release-*/sailfishos-*-${{env.DEVICE}}*.zip
