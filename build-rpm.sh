@@ -5,7 +5,8 @@ set -x
 source /home/mersdk/work/ci/ci/hadk.env
 export ANDROID_ROOT=/home/mersdk/work/ci/ci/hadk_16.0
 
-sudo chown -R mersdk:mersdk $ANDROID_ROOT
+# sudo chown -R mersdk:mersdk $ANDROID_ROOT
+sudo chown -R $(whoami):$(whoami) /home/mersdk/work/ci/ci
 cd $ANDROID_ROOT
 
 cd ~/.scratchbox2
@@ -32,6 +33,7 @@ cp /home/mersdk/work/ci/ci/helpers/*.sh rpm/dhd/helpers/
 chmod +x rpm/dhd/helpers/*.sh
 git config --global user.email "ci@github.com"
 git config --global user.name "Github Actions"
+git config --global --add safe.directory /home/mersdk/work/ci/ci
 git am --signoff < /home/mersdk/work/ci/ci/0001-Install-files-from-vendor.patch
 
 cd $ANDROID_ROOT
