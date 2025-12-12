@@ -147,10 +147,10 @@ jobs:
 
       
     - name : Upload droid-local-repo
-        uses: actions/upload-artifact@master
-        with:
-          name: droid-local-repo
-          path: ${{env.ANDROID_ROOT}}/droid-local-repo
+      uses: actions/upload-artifact@master
+      with:
+        name: droid-local-repo
+        path: ${{env.ANDROID_ROOT}}/droid-local-repo
 
     - name: Release
       uses: softprops/action-gh-release@v2
