@@ -70,8 +70,8 @@ jobs:
           mkdir -p ~/bin
           curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
           chmod a+x ~/bin/repo
-          git config --global user.name "BirdZhang"
-          git config --global user.email "0312birdzhang@gmail.com"
+          git config --global user.email "ci@github.com"
+          git config --global user.name "Github Actions"
 
       - name: Repo Sync
         run: |
@@ -127,6 +127,9 @@ jobs:
           qemu-user-static qemu-system-arm e2fsprogs simg2img \
           libtinfo5 libncurses5 gzip virtualenv git python2
           
+          git config --global user.email "ci@github.com"
+          git config --global user.name "Github Actions"
+
           # 快速恢复工作区
           cd $ANDROID_ROOT
           python3 ~/bin/repo sync -l # 仅从本地.repo恢复文件，极快
