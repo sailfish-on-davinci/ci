@@ -141,7 +141,6 @@ jobs:
           git clone https://github.com/sailfish-on-davinci/android_kernel_xiaomi_sm6150.git $ANDROID_ROOT/kernel/xiaomi/davinci --depth=1 -b wlan
           rm -rf $ANDROID_ROOT/hybris/hybris-boot
           git clone https://github.com/sailfish-on-davinci/hybris-boot.git -b davinci-fixup-mountpoints $ANDROID_ROOT/hybris/hybris-boot --depth=1
-          cd $ANDROID_ROOT && hybris-patches/apply-patches.sh --mb
 
           cd ${{ github.workspace }}
           chmod +x build-hal.sh
@@ -178,6 +177,7 @@ jobs:
           git clone --recurse-submodules https://github.com/sailfish-on-davinci/droid-config-davinci.git $ANDROID_ROOT/hybris/droid-configs --depth=1
           git clone --recurse-submodules https://github.com/sailfish-on-davinci/droid-hal-version-davinci.git $ANDROID_ROOT/hybris/droid-hal-version-davinci --depth=1
           sudo mkdir -p /home/runner/work/ci/ci/docker
+          cd ${{ github.workspace }}
           chmod +x build-rpm.sh
           #sudo docker run --privileged -v ${{ github.workspace }}:/home/mersdk/work coderus/sailfishos-platform-sdk:$SAILFISH_SDK_VERSION /bin/sh /home/mersdk/work/build-rpm.sh
           sudo docker run --privileged -v /home/runner/work:/home/mersdk/work coderus/sailfishos-platform-sdk:$SAILFISH_SDK_VERSION  /bin/sh /home/mersdk/work/ci/ci/build-rpm.sh
