@@ -126,7 +126,10 @@ jobs:
           libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc yasm zip zlib1g-dev \
           qemu-user-static qemu-system-arm e2fsprogs simg2img \
           libtinfo5 libncurses5 gzip virtualenv git python2
-          
+
+          mkdir -p ~/bin
+          curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
+          chmod a+x ~/bin/repo
           git config --global user.email "ci@github.com"
           git config --global user.name "Github Actions"
 
@@ -138,9 +141,10 @@ jobs:
           git clone https://github.com/sailfish-on-davinci/android_device_xiaomi_davinci.git $ANDROID_ROOT/device/xiaomi/davinci --depth=1 -b lineage-16.0
           git clone https://github.com/sailfish-on-davinci/android_device_xiaomi_sm6150-common $ANDROID_ROOT/device/xiaomi/sm6150-common --depth=1 -b lineage-16.0
           git clone https://github.com/sailfish-on-davinci/vendor_xiaomi.git $ANDROID_ROOT/vendor/xiaomi --depth=1 -b lineage-16.0
-          git clone https://github.com/sailfish-on-davinci/android_kernel_xiaomi_sm6150.git $ANDROID_ROOT/kernel/xiaomi/davinci --depth=1 -b wlan
+          git clone https://github.com/sailfish-on-davinci/android_kernel_xiaomi_sm6150.git $ANDROID_ROOT/kernel/xiaomi/davinci --depth=1
           rm -rf $ANDROID_ROOT/hybris/hybris-boot
           git clone https://github.com/sailfish-on-davinci/hybris-boot.git -b davinci-fixup-mountpoints $ANDROID_ROOT/hybris/hybris-boot --depth=1
+          git clone https://github.com/LineageOS/android_hardware_xiaomi.git -b lineage-18.1 $ANDROID_ROOT/hardware/xiaomi --depth=1 --single-branch
 
           cd ${{ github.workspace }}
           sudo ln -sf /usr/bin/python2.7 /usr/bin/python
