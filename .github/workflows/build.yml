@@ -10,6 +10,7 @@ on:
   push:
     branches:
       - master
+      - old_passed
   workflow_dispatch:
     inputs:
       name:
