@@ -100,7 +100,7 @@ jobs:
       run: |
         source hadk.env
         
-        rm -rf $ANDROID_ROOT/hybris/hybris-boot
+        rm -rf $ANDROID_ROOT/hybris/hybris-boot $ANDROID_ROOT/external/libhybris
         git clone https://github.com/sailfish-on-davinci/hybris-boot.git -b davinci-fixup-mountpoints $ANDROID_ROOT/hybris/hybris-boot --depth=1
         git clone --recurse-submodules  https://github.com/mer-hybris/libhybris.git $ANDROID_ROOT/external/libhybris
         cd $ANDROID_ROOT && hybris-patches/apply-patches.sh --mb

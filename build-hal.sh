@@ -21,11 +21,9 @@ rm -rf external/droidmedia
 git clone --recurse-submodules https://github.com/sailfishos/droidmedia.git external/droidmedia
 cd external/droidmedia
 git checkout 0.20230605.1
-echo 'MINIMEDIA_AUDIOPOLICYSERVICE_ENABLE := 1' >> external/droidmedia/env.mk
-echo 'AUDIOPOLICYSERVICE_ENABLE := 1' >> external/droidmedia/env.mk
+echo 'MINIMEDIA_AUDIOPOLICYSERVICE_ENABLE := 1' >> env.mk
+echo 'AUDIOPOLICYSERVICE_ENABLE := 1' >> env.mk
 
-cd $ANDROID_ROOT/external
-git clone --recurse-submodules https://github.com/mer-hybris/libhybris.git
 # hybris-patches
 cd $ANDROID_ROOT
 hybris-patches/apply-patches.sh --mb
