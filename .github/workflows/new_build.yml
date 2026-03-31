@@ -25,7 +25,7 @@ env:
   VENDOR: xiaomi
   ANDROID_ROOT: /home/runner/work/ci/ci/hadk_16.0
   SAILFISH_SDK_VERSION: 5.0.0.43
-  SAILFISH_OS_VERSION: 5.0.0.71
+  SAILFISH_OS_VERSION: 5.0.0.77
 
 jobs:
   # 1. 同步源码任务
@@ -181,6 +181,7 @@ jobs:
           git clone --recurse-submodules https://github.com/sailfish-on-davinci/droid-hal-davinci.git $ANDROID_ROOT/rpm --depth=1
           git clone --recurse-submodules https://github.com/sailfish-on-davinci/droid-config-davinci.git $ANDROID_ROOT/hybris/droid-configs --depth=1
           git clone --recurse-submodules https://github.com/sailfish-on-davinci/droid-hal-version-davinci.git $ANDROID_ROOT/hybris/droid-hal-version-davinci --depth=1
+          git clone --recurse-submodules https://github.com/mer-hybris/mer-kernel-check.git $ANDROID_ROOT/hybris/mer-kernel-check --depth=1 || true
           sudo mkdir -p /home/runner/work/ci/ci/docker
           cd ${{ github.workspace }}
           chmod +x build-rpm.sh
